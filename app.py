@@ -40,7 +40,7 @@ sentiment_model, topic_model = load_models()
 st.title("📊 Financial News Intelligence")
 
 st.markdown("""
-Analyze financial news and generate structured insights for investment decision support.
+Analyze financial news and generate structured interpretation for investment decision support.
 
 This application automatically identifies:
 
