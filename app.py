@@ -8,7 +8,7 @@ from transformers import pipeline
 st.set_page_config(
     page_title="Financial News Intelligence",
     page_icon="📊",
-    layout="centered"
+    layout="wide"
 )
 
 # =====================================================
@@ -40,37 +40,55 @@ sentiment_model, topic_model = load_models()
 st.title("📊 Financial News Intelligence")
 
 st.markdown("""
-Analyze financial news and generate structured interpretation for investment decision support.
+Analyze financial news and generate structured insights for investment decision support.
 
 This application automatically identifies:
 
 - 📈 Market Sentiment
-- 🏷️ News Topic
+- 🏷️ Primary and Related Topics
 - 📋 Interpretation
 """)
 
 # =====================================================
-# Example News
+# Sidebar
 # =====================================================
 
-with st.expander("📄 Example Financial News"):
+st.sidebar.header("Quick Examples")
 
-    st.write("""
-Apple reported record quarterly earnings, beating analyst expectations on both revenue and profit. The company also raised its guidance for the next quarter, citing strong demand for its new products.
-""")
+example_news = {
+    "Apple Earnings Beat Expectations":
+    """Apple reported record quarterly earnings, beating analyst expectations on both revenue and profit. The company also raised its guidance for the next quarter.""",
+
+    "Tesla Misses Forecast":
+    """Tesla shares fell sharply after the company reported lower-than-expected quarterly earnings and warned of weaker demand in key markets.""",
+
+    "Microsoft Acquires AI Startup":
+    """Microsoft announced the acquisition of a leading artificial intelligence startup in a deal valued at $12 billion, strengthening its AI portfolio."""
+}
+
+selected_example = st.sidebar.selectbox(
+    "Choose an example:",
+    ["None"] + list(example_news.keys())
+)
 
 # =====================================================
-# User Input
+# Input
 # =====================================================
+
+default_text = ""
+
+if selected_example != "None":
+    default_text = example_news[selected_example]
 
 news = st.text_area(
-    "Paste a financial news article or headline:",
-    height=220,
+    "📰 Paste a financial news article or headline:",
+    value=default_text,
+    height=250,
     placeholder="Enter financial news here..."
 )
 
 # =====================================================
-# Analysis
+# Analyze
 # =====================================================
 
 if st.button("Analyze News", use_container_width=True):
@@ -81,65 +99,76 @@ if st.button("Analyze News", use_container_width=True):
 
     with st.spinner("Analyzing news..."):
 
+        # Sentiment
         sentiment = sentiment_model(news)[0]
+
+        # Top 3 Topics
         topic_results = topic_model(
-    news,
-    top_k=3
-)
-        for i, result in enumerate(topic_results, start=1):
-    st.write(
-        f"{i}. {result['label']} ({result['score']:.1%})"
-    )
+            news,
+            top_k=3
+        )
 
     sentiment_label = sentiment["label"]
     sentiment_score = sentiment["score"]
 
-    topic_label = topic["label"]
-    topic_score = topic["score"]
+    primary_topic = topic_results[0]["label"]
+    primary_score = topic_results[0]["score"]
 
     st.divider()
 
     # =================================================
-    # Results Section
+    # Main Results
     # =================================================
 
     col1, col2 = st.columns(2)
 
-    # -------------------------------
+    # -----------------------------
     # Sentiment
-    # -------------------------------
+    # -----------------------------
 
     with col1:
 
         st.subheader("📈 Market Sentiment")
 
-        if sentiment_label.lower() in ["bullish", "positive"]:
+        st.metric(
+            label="Sentiment",
+            value=sentiment_label
+        )
 
-            st.success(sentiment_label)
+        st.write(f"Confidence: {sentiment_score:.1%}")
 
-        elif sentiment_label.lower() in ["bearish", "negative"]:
-
-            st.error(sentiment_label)
-
-        else:
-
-            st.warning(sentiment_label)
-
-        st.write(f"**Confidence:** {sentiment_score:.1%}")
         st.progress(float(sentiment_score))
 
-    # -------------------------------
-    # Topic
-    # -------------------------------
+    # -----------------------------
+    # Primary Topic
+    # -----------------------------
 
     with col2:
 
-        st.subheader("🏷️ News Topic")
+        st.subheader("🏷️ Primary Topic")
 
-        st.info(topic_label)
+        st.metric(
+            label="Topic",
+            value=primary_topic
+        )
 
-        st.write(f"**Confidence:** {topic_score:.1%}")
-        st.progress(float(topic_score))
+        st.write(f"Confidence: {primary_score:.1%}")
+
+        st.progress(float(primary_score))
+
+    # =================================================
+    # Related Topics
+    # =================================================
+
+    st.divider()
+
+    st.subheader("🏷️ Topic Analysis")
+
+    for i, result in enumerate(topic_results, start=1):
+
+        st.write(
+            f"**{i}. {result['label']}** — {result['score']:.1%}"
+        )
 
     # =================================================
     # Interpretation
@@ -151,13 +180,32 @@ if st.button("Analyze News", use_container_width=True):
 
     st.write(
         f"""
-The submitted article is classified as **{sentiment_label}** in market sentiment and belongs to the **{topic_label}** topic category.
+The article is classified as **{sentiment_label}** in market sentiment.
 
-The sentiment classification was generated with a confidence score of **{sentiment_score:.1%}**, while the topic classification achieved a confidence score of **{topic_score:.1%}**.
+The dominant topic is **{primary_topic}**, with a confidence score of **{primary_score:.1%}**.
 
-This result suggests that the news primarily relates to **{topic_label}** and reflects a **{sentiment_label.lower()}** market tone.
+Additional related topics were identified and are displayed above, providing broader context for the news article.
+
+Overall, the news reflects a **{sentiment_label.lower()}** market tone and is primarily associated with **{primary_topic}**.
 """
     )
+
+    # =================================================
+    # Article Statistics
+    # =================================================
+
+    st.divider()
+
+    word_count = len(news.split())
+    char_count = len(news)
+
+    col3, col4 = st.columns(2)
+
+    with col3:
+        st.metric("Words", word_count)
+
+    with col4:
+        st.metric("Characters", char_count)
 
 # =====================================================
 # Footer
