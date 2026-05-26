@@ -82,7 +82,14 @@ if st.button("Analyze News", use_container_width=True):
     with st.spinner("Analyzing news..."):
 
         sentiment = sentiment_model(news)[0]
-        topic = topic_model(news)[0]
+        topic_results = topic_model(
+    news,
+    top_k=3
+)
+        for i, result in enumerate(topic_results, start=1):
+    st.write(
+        f"{i}. {result['label']} ({result['score']:.1%})"
+    )
 
     sentiment_label = sentiment["label"]
     sentiment_score = sentiment["score"]
