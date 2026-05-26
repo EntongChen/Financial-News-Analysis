@@ -1,15 +1,20 @@
 import streamlit as st
 from transformers import pipeline
 
+# =====================================================
+# Page Configuration
+# =====================================================
+
 st.set_page_config(
-    page_title="Bloomberg Financial News Intelligence Platform",
+    page_title="Financial News Intelligence",
     page_icon="📊",
-    layout="wide"
+    layout="centered"
 )
 
-# ----------------------------
+# =====================================================
 # Load Models
-# ----------------------------
+# =====================================================
+
 @st.cache_resource
 def load_models():
 
@@ -28,29 +33,25 @@ def load_models():
 
 sentiment_model, topic_model = load_models()
 
-# ----------------------------
+# =====================================================
 # Header
-# ----------------------------
+# =====================================================
 
-st.title("📊 Bloomberg Financial News Intelligence Platform")
+st.title("📊 Financial News Intelligence")
 
 st.markdown("""
-This application supports **investment risk assessment** and **data-driven decision making** by automatically analyzing financial news.
+Analyze financial news and generate structured insights for investment decision support.
 
-### Analysis Pipeline
+This application automatically identifies:
 
-**Pipeline 1: Financial Sentiment Analysis**
-- Model: Fine-tuned FinBERT
-- Output: Bullish / Bearish / Neutral
-
-**Pipeline 2: Financial Topic Classification**
-- Model: Fine-tuned DistilBERT
-- Output: Earnings, M&A, Macro, Crypto, Markets, etc.
+- 📈 Market Sentiment
+- 🏷️ News Topic
+- 📋 Interpretation
 """)
 
-# ----------------------------
+# =====================================================
 # Example News
-# ----------------------------
+# =====================================================
 
 with st.expander("📄 Example Financial News"):
 
@@ -58,92 +59,105 @@ with st.expander("📄 Example Financial News"):
 Apple reported record quarterly earnings, beating analyst expectations on both revenue and profit. The company also raised its guidance for the next quarter, citing strong demand for its new products.
 """)
 
-# ----------------------------
-# Input
-# ----------------------------
+# =====================================================
+# User Input
+# =====================================================
 
 news = st.text_area(
     "Paste a financial news article or headline:",
-    height=200
+    height=220,
+    placeholder="Enter financial news here..."
 )
 
-# ----------------------------
+# =====================================================
 # Analysis
-# ----------------------------
+# =====================================================
 
-if st.button("Analyze News"):
+if st.button("Analyze News", use_container_width=True):
 
     if news.strip() == "":
-        st.warning("Please enter financial news text.")
-    else:
+        st.warning("Please enter a financial news article.")
+        st.stop()
+
+    with st.spinner("Analyzing news..."):
 
         sentiment = sentiment_model(news)[0]
         topic = topic_model(news)[0]
 
-        sentiment_label = sentiment["label"]
-        sentiment_score = sentiment["score"]
+    sentiment_label = sentiment["label"]
+    sentiment_score = sentiment["score"]
 
-        topic_label = topic["label"]
-        topic_score = topic["score"]
+    topic_label = topic["label"]
+    topic_score = topic["score"]
 
-        st.divider()
+    st.divider()
 
-        col1, col2 = st.columns(2)
+    # =================================================
+    # Results Section
+    # =================================================
 
-        # ------------------
-        # Sentiment
-        # ------------------
+    col1, col2 = st.columns(2)
 
-        with col1:
+    # -------------------------------
+    # Sentiment
+    # -------------------------------
 
-            st.subheader("📈 Market Sentiment")
+    with col1:
 
-            if sentiment_label.lower() in ["bullish", "positive"]:
+        st.subheader("📈 Market Sentiment")
 
-                st.success(
-                    f"{sentiment_label} ({sentiment_score:.2%})"
-                )
+        if sentiment_label.lower() in ["bullish", "positive"]:
 
-                st.progress(float(sentiment_score))
+            st.success(sentiment_label)
 
-                st.info(
-                    "The news reflects positive market sentiment and may indicate favorable expectations for future performance."
-                )
+        elif sentiment_label.lower() in ["bearish", "negative"]:
 
-            elif sentiment_label.lower() in ["bearish", "negative"]:
+            st.error(sentiment_label)
 
-                st.error(
-                    f"{sentiment_label} ({sentiment_score:.2%})"
-                )
+        else:
 
-                st.progress(float(sentiment_score))
+            st.warning(sentiment_label)
 
-                st.info(
-                    "The news reflects negative market sentiment and may signal elevated investment risk."
-                )
+        st.write(f"**Confidence:** {sentiment_score:.1%}")
+        st.progress(float(sentiment_score))
 
-            else:
+    # -------------------------------
+    # Topic
+    # -------------------------------
 
-                st.warning(
-                    f"{sentiment_label} ({sentiment_score:.2%})"
-                )
+    with col2:
 
-                st.progress(float(sentiment_score))
+        st.subheader("🏷️ News Topic")
 
-                st.info(
-                    "The news appears neutral and primarily informational."
-                )
+        st.info(topic_label)
 
-        # ------------------
-        # Topic
-        # ------------------
+        st.write(f"**Confidence:** {topic_score:.1%}")
+        st.progress(float(topic_score))
 
-        with col2:
+    # =================================================
+    # Interpretation
+    # =================================================
 
-            st.subheader("🏷️ News Topic")
+    st.divider()
 
-            st.info(
-                f"{topic_label} ({topic_score:.2%})"
-            )
+    st.subheader("📋 Interpretation")
 
-            st.progress(float(topic_score))
+    st.write(
+        f"""
+The submitted article is classified as **{sentiment_label}** in market sentiment and belongs to the **{topic_label}** topic category.
+
+The sentiment classification was generated with a confidence score of **{sentiment_score:.1%}**, while the topic classification achieved a confidence score of **{topic_score:.1%}**.
+
+This result suggests that the news primarily relates to **{topic_label}** and reflects a **{sentiment_label.lower()}** market tone.
+"""
+    )
+
+# =====================================================
+# Footer
+# =====================================================
+
+st.divider()
+
+st.caption(
+    "Financial News Intelligence Platform | Financial News Sentiment Analysis and Topic Classification"
+)
