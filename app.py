@@ -45,12 +45,6 @@ if "input_key" not in st.session_state:
 
 st.title("📊 Financial News Intelligence")
 st.markdown("*Powered for Bloomberg L.P. — Financial Analysis Platform*")
-
-st.markdown("""
-Analyze financial news and generate structured insights for investment decision support at **Bloomberg L.P.**
-...
-""")
-
 st.markdown("Analyze financial news and generate structured insights for investment decision support at **Bloomberg L.P.**")
 st.markdown("This application automatically identifies:")
 st.markdown("- **Market Sentiment** - Bullish, Bearish, or Neutral")
