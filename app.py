@@ -104,9 +104,9 @@ with col_btn1:
 
 with col_btn2:
     if st.button("🗑️ Clear", use_container_width=True):
-    st.session_state.news_text = ""
-    st.session_state.news_input = ""    # 加这行
-    st.rerun()
+        st.session_state.news_text = ""
+        st.session_state.news_input = ""
+        st.rerun()
 
 # =====================================================
 # Analysis
