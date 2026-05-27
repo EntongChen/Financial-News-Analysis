@@ -54,10 +54,12 @@ Analyze financial news and generate structured insights for investment decision 
 """)
 
 This application automatically identifies:
-- 📈 **Market Sentiment** — Bullish, Bearish, or Neutral
-- 🏷️ **Primary Topic** — across 20 financial categories
-- 📋 **Interpretation** — a plain-language summary of findings
+- **Market Sentiment** — Bullish, Bearish, or Neutral
+- **Primary Topic** — across 20 financial categories
+- **Interpretation** — a plain-language summary of findings
 """)
+st.markdown("""
+Analyze financial news and generate structured insights for investment decision support at **Bloomberg L.P.**
 
 # =====================================================
 # Sidebar
