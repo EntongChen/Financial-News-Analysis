@@ -30,6 +30,8 @@ def load_models():
 
 sentiment_model, topic_model = load_models()
 
+if "news_text" not in st.session_state:
+    st.session_state.news_text = ""
 # =====================================================
 # Header
 # =====================================================
@@ -75,13 +77,12 @@ st.sidebar.markdown("- Dataset: Twitter Financial News")
 # Input
 # =====================================================
 
-default_text = ""
 if selected_example != "None":
-    default_text = example_news[selected_example]
+    st.session_state.news_text = example_news[selected_example]
 
 news = st.text_area(
     "📰 Paste a financial news article or headline:",
-    value=default_text,
+    value=st.session_state.news_text,
     height=250,
     placeholder="Enter financial news here..."
 )
@@ -97,7 +98,8 @@ with col_btn1:
 
 with col_btn2:
     if st.button("🗑️ Clear", use_container_width=True):
-        st.rerun()
+    st.session_state.news_text = ""
+    st.rerun()
 
 # =====================================================
 # Analysis
