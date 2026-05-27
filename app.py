@@ -30,8 +30,13 @@ def load_models():
 
 sentiment_model, topic_model = load_models()
 
+# =====================================================
+# Session State
+# =====================================================
+
 if "news_text" not in st.session_state:
     st.session_state.news_text = ""
+
 # =====================================================
 # Header
 # =====================================================
@@ -39,7 +44,7 @@ if "news_text" not in st.session_state:
 st.title("📊 Financial News Intelligence")
 
 st.markdown("""
-Analyze financial news and generate structured interpretation for investment decision support.
+Analyze financial news and generate structured insights for investment decision support.
 
 This application automatically identifies:
 - 📈 **Market Sentiment** — Bullish, Bearish, or Neutral
@@ -67,6 +72,9 @@ selected_example = st.sidebar.selectbox(
     ["None"] + list(example_news.keys())
 )
 
+if selected_example != "None":
+    st.session_state.news_text = example_news[selected_example]
+
 st.sidebar.divider()
 st.sidebar.markdown("**ℹ️ Models Used**")
 st.sidebar.markdown("- Sentiment: FinBERT (fine-tuned)")
@@ -76,9 +84,6 @@ st.sidebar.markdown("- Dataset: Twitter Financial News")
 # =====================================================
 # Input
 # =====================================================
-
-if selected_example != "None":
-    st.session_state.news_text = example_news[selected_example]
 
 news = st.text_area(
     "📰 Paste a financial news article or headline:",
@@ -98,8 +103,8 @@ with col_btn1:
 
 with col_btn2:
     if st.button("🗑️ Clear", use_container_width=True):
-    st.session_state.news_text = ""
-    st.rerun()
+        st.session_state.news_text = ""
+        st.rerun()
 
 # =====================================================
 # Analysis
