@@ -90,6 +90,7 @@ news = st.text_area(
     value=st.session_state.news_text,
     height=250,
     placeholder="Enter financial news here..."
+    key="news_input"
 )
 
 # =====================================================
@@ -103,8 +104,9 @@ with col_btn1:
 
 with col_btn2:
     if st.button("🗑️ Clear", use_container_width=True):
-        st.session_state.news_text = ""
-        st.rerun()
+    st.session_state.news_text = ""
+    st.session_state.news_input = ""    # 加这行
+    st.rerun()
 
 # =====================================================
 # Analysis
