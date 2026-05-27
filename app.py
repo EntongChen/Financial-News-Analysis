@@ -44,9 +44,12 @@ if "input_key" not in st.session_state:
 # =====================================================
 
 st.title("📊 Financial News Intelligence")
+st.markdown("*Powered for Bloomberg L.P. — Financial Analysis Platform*")
 
 st.markdown("""
-Analyze financial news and generate structured insights for investment decision support.
+Analyze financial news and generate structured insights for investment decision support at **Bloomberg L.P.**
+...
+""")
 
 This application automatically identifies:
 - 📈 **Market Sentiment** — Bullish, Bearish, or Neutral
@@ -57,6 +60,11 @@ This application automatically identifies:
 # =====================================================
 # Sidebar
 # =====================================================
+
+st.sidebar.divider()
+st.sidebar.markdown("**🏢 Target Organization**")
+st.sidebar.markdown("Bloomberg L.P.")
+st.sidebar.markdown("[bloomberg.com](https://www.bloomberg.com)")
 
 st.sidebar.header("💡 Quick Examples")
 
@@ -210,4 +218,4 @@ Overall, the news reflects a **{sentiment_label.lower()}** market tone and is pr
 # =====================================================
 
 st.divider()
-st.caption("Financial News Intelligence Platform | Sentiment Analysis and Topic Classification")
+st.caption("Financial News Intelligence Platform | Developed for Bloomberg L.P. | Sentiment Analysis and Topic Classification")
