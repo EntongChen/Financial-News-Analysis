@@ -75,7 +75,10 @@ selected_example = st.sidebar.selectbox(
 )
 
 if selected_example != "None":
-    st.session_state.news_text = example_news[selected_example]
+    if st.session_state.news_text != example_news[selected_example]:
+        st.session_state.news_text = example_news[selected_example]
+        st.session_state.input_key += 1
+        st.rerun()
 
 st.sidebar.divider()
 st.sidebar.markdown("**ℹ️ Models Used**")
