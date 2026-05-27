@@ -89,7 +89,7 @@ news = st.text_area(
     "📰 Paste a financial news article or headline:",
     value=st.session_state.news_text,
     height=250,
-    placeholder="Enter financial news here..."
+    placeholder="Enter financial news here...",
     key="news_input"
 )
 
