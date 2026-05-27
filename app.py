@@ -36,6 +36,8 @@ sentiment_model, topic_model = load_models()
 
 if "news_text" not in st.session_state:
     st.session_state.news_text = ""
+if "input_key" not in st.session_state:
+    st.session_state.input_key = 0
 
 # =====================================================
 # Header
@@ -90,7 +92,7 @@ news = st.text_area(
     value=st.session_state.news_text,
     height=250,
     placeholder="Enter financial news here...",
-    key="news_input"
+    key=f"news_input_{st.session_state.input_key}"
 )
 
 # =====================================================
@@ -105,7 +107,7 @@ with col_btn1:
 with col_btn2:
     if st.button("🗑️ Clear", use_container_width=True):
         st.session_state.news_text = ""
-        st.session_state.news_input = ""
+        st.session_state.input_key += 1
         st.rerun()
 
 # =====================================================
